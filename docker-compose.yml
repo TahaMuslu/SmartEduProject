@@ -1,0 +1,37 @@
+services:
+  app:
+    depends_on:
+      - mongo
+    restart: always
+    image: node:18-alpine
+    command: sh -c "npm install && npm start"
+    ports:
+      - 5000:5000 # ? change this to your desired port
+    volumes:
+      - ./:/app
+    working_dir: /app
+    environment:
+      MONGO_HOST: mongo
+      MONGO_USER: root # ? change this to your desired user
+      MONGO_PASSWORD: example # ? change this to your desired password
+      MONGO_DB: smartedu-db # ? change this to your desired database
+      MONGO_PORT: 27017
+    container_name: "app"
+  mongo:
+    image: mongo:6.0.5
+    restart: always
+    volumes:
+      - mongodb-data:/data/db
+      - mongodb-config:/data/configdb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root # ? change this to your desired user
+      MONGO_INITDB_ROOT_PASSWORD: example # ? change this to your desired password
+      MONGO_INITDB_DATABASE: smartedu-db # ? change this to your desired database
+    ports:
+      - 27017:27017
+    container_name: "mongo"
+volumes:
+  mongodb-data:
+    driver: local
+  mongodb-config:
+    driver: local

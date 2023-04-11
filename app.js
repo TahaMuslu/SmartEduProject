@@ -14,12 +14,20 @@ const userRoute = require('./routes/userRoute');
 //Express Start
 const app = express();
 
+//Constants
+const {
+    MONGO_HOST: HOST,
+    MONGO_USER: USER,
+    MONGO_PASSWORD: PASS,
+    MONGO_DB: DB,
+    MONGO_PORT: PORT
+} = process.env;
 
 //Connect DB
-mongoose.connect('mongodb+srv://tahamuslu:ibeenamelesi1221@cluster0.zicuhh7.mongodb.net/?retryWrites=true&w=majority')
+mongoose.connect(`mongodb://${USER}:${PASS}@${HOST}:${PORT}?authSource=admin`)
     .then(() => {
         console.log("DB Connected!");
-    })
+    });
 
 
 
@@ -40,13 +48,13 @@ app.use(session({
     secret: 'my_keyboard cat',
     resave: false,
     saveUninitialized: true,
-    store: MongoStore.create({ mongoUrl: 'mongodb://127.0.0.1:27017/smartedu-db' })
+    store: MongoStore.create({ mongoUrl: `mongodb://${USER}:${PASS}@${HOST}:${PORT}/${DB}?authSource=admin` })
 }));
 app.use(flash());
 app.use((req, res, next) => {
     res.locals.flashMessages = req.flash();
     next();
-})
+});
 app.use(methodOverride('_method', {
     methods: ['POST', 'GET']
 })
